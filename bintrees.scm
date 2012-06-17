@@ -44,7 +44,7 @@
     (define (bintree-leaf-element L)
       "Retrieve the element of a leaf L."
       (first L))
-					; Note the redundancy here. Might be able to economize...
+    ;; Note the redundancy here. Might be able to economize...
     (define (bintree-node-element N)
       "Retrieve the element of a node N."
       (first N))
@@ -71,15 +71,23 @@
 
     (define (bintree-member? E B)
       "Test if element E is a member of binary tree B."
-      (if (bintree-leaf? B) ; See if B is already a leaf, e.g., a list with length of 1.
-	  (equal? E (bintree-leaf-element B)) ; If so, is E equal? to B?
-	  (or (equal? E (bintree-node-element B)) ; is E equal to the node element?
-	      (bintree-member? E (bintree-node-left B)) ; ... otherwise, we recur down
-	      (bintree-member? E (bintree-node-right B))))) ; the two halves of the tree..
+      ;; See if B is already a leaf, e.g., a list with length of 1.
+      (if (bintree-leaf? B) 
+	  ;; If so, is E equal? to B?
+	  (equal? E (bintree-leaf-element B)) 
+	  ;; is E equal to the node element?
+	  (or (equal? E (bintree-node-element B))
+	      ;; ... otherwise, we recur down
+	      (bintree-member? E (bintree-node-left B))
+	      ;; the two halves of the tree..
+	      (bintree-member? E (bintree-node-right B)))))
 
-    ;; Exercise: Let size(B) be the number of members of a binary tree B. Give a recursive definition of size(B), then implement a Scheme procedure (bintree-size B) that returns size(B).
+    ;; Exercise: Let size(B) be the number of members of a binary tree
+    ;; B. Give a recursive definition of size(B), then implement a Scheme
+    ;; procedure (bintree-size B) that returns size(B).
 
-    ;; If B is a leaf, its size is 1. Otherwise, add 1 to the sum of size(left subtree of B) and size(right subtree of B).
+    ;; If B is a leaf, its size is 1. Otherwise, add 1 to the sum of
+    ;; size(left subtree of B) and size(right subtree of B).
 
     (define (bintree-size B)
       "How many elements in binary tree B?"
@@ -341,4 +349,3 @@ element E."
 		    left
 		    N)
 		(make-bintree-node this left (bst-node-remove E right))))))))
-
