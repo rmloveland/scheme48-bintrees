@@ -17,6 +17,8 @@
 				   list->tree
 				   treesum
 				   treesort
+                                   make-bintree-leaf
+                                   make-bintree-node
 				   L
 				   test-bintree
 				   test-bst)
@@ -339,3 +341,4 @@ element E."
 		    left
 		    N)
 		(make-bintree-node this left (bst-node-remove E right))))))))
+
