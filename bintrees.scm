@@ -1,34 +1,50 @@
-;; -*- mode: scheme48; scheme48-package: bintrees -*-
+;;; -*- mode: scheme48; scheme48-package: bintrees -*-
 
-(define-structure bintrees (export bintree-member?
-				   bintree-size
-				   bintree-reverse
-				   bintree-preorder
-				   fast-bintree-preorder
-				   bintree-postorder
-				   fast-bintree-postorder
-				   bintree-inorder
-				   fast-bintree-inorder
-				   bst-empty?
-				   bst-member?
-				   bst-insert
-				   (bst-insert! :syntax)
-				   bst-remove
-				   list->tree
-				   treesum
-				   treesort
-                                   make-bintree-leaf
-                                   make-bintree-node
-				   L
-				   test-bintree
-				   test-bst)
-  (open scheme srfi-1)
+;;; bintrees.scm --- Simple Binary Tree (and Binary Search Tree)
+;;; implementation for Scheme 48.
+
+(define-structure bintrees
+    ;; interface
+    (export bintree-member?
+	    bintree-size
+	    bintree-reverse
+	    bintree-preorder
+	    fast-bintree-preorder
+	    bintree-postorder
+	    fast-bintree-postorder
+	    bintree-inorder
+	    fast-bintree-inorder
+	    bst-empty?
+	    bst-member?
+	    bst-insert
+	    (bst-insert! :syntax)
+	    bst-remove
+	    list->tree
+	    treesum
+	    treesort
+	    make-bintree-leaf
+	    make-bintree-node
+	    ;; Uncomment these lines to have some toy data to play with.
+	    ;; L
+	    ;; test-bintree
+	    ;; test-bst
+	    )
+  (open scheme)
   (begin
+
+    ;; Toy data to play with.
     (define L '(128 76 106 402 100 46 354 1018 112 28 396 35))
     (define test-bintree '(- (+ (128) (12)) (136.2)))
     (define test-bst '(2 (1 (1) (2)) (3 (3) (4))))
 
-;;; BINARY TREES.
+    ;; Utilities. (These are used because Scheme 48 0.53 doesn't have
+    ;; SRFI-1.)
+    (define first car)
+    (define second cadr)
+    (define third caddr)
+
+;;; Binary Trees.
+
     ;; Constructors.
 
     (define (make-bintree-leaf E)
@@ -44,7 +60,7 @@
     (define (bintree-leaf-element L)
       "Retrieve the element of a leaf L."
       (first L))
-    ;; Note the redundancy here. Might be able to economize...
+
     (define (bintree-node-element N)
       "Retrieve the element of a node N."
       (first N))
@@ -73,18 +89,17 @@
       "Test if element E is a member of binary tree B."
       ;; See if B is already a leaf, e.g., a list with length of 1.
       (if (bintree-leaf? B) 
-	  ;; If so, is E equal? to B?
 	  (equal? E (bintree-leaf-element B)) 
 	  ;; is E equal to the node element?
 	  (or (equal? E (bintree-node-element B))
-	      ;; ... otherwise, we recur down
+	      ;; ...otherwise, we recur down...
 	      (bintree-member? E (bintree-node-left B))
-	      ;; the two halves of the tree..
+	      ;; ...the two halves of the tree...
 	      (bintree-member? E (bintree-node-right B)))))
 
     ;; Exercise: Let size(B) be the number of members of a binary tree
-    ;; B. Give a recursive definition of size(B), then implement a Scheme
-    ;; procedure (bintree-size B) that returns size(B).
+    ;; B. Give a recursive definition of size(B), then implement a
+    ;; Scheme procedure (bintree-size B) that returns size(B).
 
     ;; If B is a leaf, its size is 1. Otherwise, add 1 to the sum of
     ;; size(left subtree of B) and size(right subtree of B).
@@ -116,9 +131,6 @@
 
     (define (fast-bintree-preorder B)
       "A tail-recursive version of bin-tree-preorder."
-      ;; Note that this is an example of sequential programming, and would
-      ;; in theory be less efficient in parallel on multicore systems. See
-      ;; Guy Steele's 'foldl and foldr considered slightly harmful.'
       (letrec ((preorder-aux
 		(lambda (B A)
 		  (if (bintree-leaf? B)
@@ -133,8 +145,7 @@
     ;; tail-recursive version of the same function.
 
     (define (bintree-postorder-easy B)
-      "Create a postorder list of keys in B, defined using
-'bintree-preorder.'"
+      "Create a postorder list of keys in B."
       (if (bintree-leaf? B)
 	  (list (bintree-leaf-element B))
 	  (reverse (bintree-preorder B))))
@@ -186,40 +197,13 @@
 			 (bintree-node-right B) A C)))))))
 	(inorder-aux B '() '())))
 
-;;; SETS.
+;;; Binary Search Trees.
 
-    (define (make-empty-set)
-      "Creates an empty set."
-      '())
+    ;; These will be implemented in terms of the binary trees we just
+    ;; created.
 
-    (define (set-insert E S)
-      "Return a set containing all the members of the set S plus the
-element E."
-      (lset-adjoin equal? S E))
-
-    (define (set-remove E S)
-      "Return a set containing all the members of the set S except the
-element E."
-      (let ((not-E?
-	     (lambda (elem)
-	       (if (equal? E elem)
-		   #f
-		   #t))))
-	(filter not-E? S)))
-
-    (define (set-member? E S)
-      "Return #t if set S contains element E."
-      (if (member E S)
-	  #t
-	  #f))
-
-    (define (set-empty? S)
-      "Return #t if the set S is empty."
-      (null? S))
-
-
-;;; BINARY SEARCH TREES.
-    ;; These will be implemented in terms of our above binary trees.
+    ;; FIXME: Consider making this a separate module that depends on
+    ;; the binary trees.
 
     (define (make-empty-bst)
       "Create an empty binary search tree."
@@ -274,6 +258,8 @@ element E."
 	    (else (+ (treesum (car tree))
 		     (treesum (cdr tree))))))
 
+    ;; FIXME: rewrite this procedure, it does lots of unnecessary
+    ;; work. Plus, it's ugly.
     (define (treesort xs)
       (let ((result '())
 	    (seen '())
@@ -301,23 +287,26 @@ element E."
 				   left
 				   (bst-nonempty-insert E (bintree-node-right B)))))))
 
-    (define (bst-leaf-insert E L) ; This needs changing for Harel.
+    (define (bst-leaf-insert E L)
       "Insert element E into a binary search tree with only one leaf."
-      (let ((this (bintree-leaf-element L)))
-	(if (= E this)
-	    L ; return yourself
-	    (if (< E this)
-		(make-bintree-node E ; Make E a node, and E the lesser leaf
+      (let ((self (bintree-leaf-element L)))
+	(if (= E self)
+	    L ;; Return yourself.
+	    (if (< E self)
+		(make-bintree-node E
+				   ;; If E is smaller than you, make E
+				   ;; a node, and also the lesser
+				   ;; leaf.
 				   (make-bintree-leaf E)
-				   (make-bintree-leaf this)) ; Make
-					; yourself the right leaf
-		(make-bintree-node this ; else make yourself the node
-				   (make-bintree-leaf this) ; ...and the
-					; lesser leaf
-				   (make-bintree-leaf E)))))) ; make E the
-					; greater leaf
-
-    ;; Removal
+				   ;; Then, make yourself the right
+				   ;; leaf.
+				   (make-bintree-leaf self))
+		(make-bintree-node self
+				   ;; Otherwise, make yourself the
+				   ;; node, and also the lesser
+				   ;; leaf. Make E the right leaf.
+				   (make-bintree-leaf self)
+				   (make-bintree-leaf E))))))
 
     (define (bst-remove E B)
       "Remove the element E from the binary search tree B."
@@ -349,3 +338,5 @@ element E."
 		    left
 		    N)
 		(make-bintree-node this left (bst-node-remove E right))))))))
+
+;;; bintrees.scm ends here
