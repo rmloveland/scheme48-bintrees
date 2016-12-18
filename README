@@ -1,1 +1,196 @@
-This is a first cut at a little binary search tree library for Scheme 48.
+# Scheme48-bintrees
+
+This is a binary tree and binary search tree library for Scheme 48
+(scsh).
+
+Based on
+[this article on Binary Search Trees](http://web.archive.org/web/20110917085740/http://en.literateprograms.org/Binary_search_tree_(Scheme)).
+
+For more general information about binary search trees, see
+[Binary search tree](https://en.wikipedia.org/wiki/Binary_search_trees).
+
+## Constructors
+
+### make-bintree-leaf
+
+```
+(make-bintree-leaf 'A)
+; => '(A)
+```
+
+### make-bintree-node
+
+```
+(make-bintree-node 'E (make-bintree-leaf 'F) (make-bintree-leaf 'G))
+; => '(E (F) (G))
+```
+
+## Selectors
+
+## Recognizers
+
+### bintree-member?
+
+```
+> test-bst
+'(2 (1 (1) (2)) (3 (3) (4)))
+> (bintree-member? 3 test-bst)
+#t
+> (bintree-member? 32 test-bst)
+#f
+```
+
+### bst-empty?
+
+```
+> (bst-empty? '())
+#t
+> (bst-empty? (make-bintree-node 'E (make-bintree-leaf 'F) (make-bintree-leaf 'G)))
+#f
+```
+
+### bst-member?
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (bst-member? 1099 (list->tree L))
+#f
+> (bst-member? 76 (list->tree L))
+#t
+```
+
+## Mutators
+
+### bst-insert
+
+```
+> (bst-insert 1017 (list->tree L))
+'(76 (46 (28 (28) (35 (35) (46))) (76)) (106 (100 (100) (106)) (128 (112 (112) (128)) (354 (354) (402 (396 (396) (402)) (1017 (1017) (1018)))))))
+```
+
+### bst-insert! (syntax)
+
+Destructive version of `BST-INSERT`.
+
+### bst-remove
+
+```
+> (list->tree L)
+(76
+ (46 (28 (28) (35 (35) (46))) (76))
+ (106
+  (100 (100) (106))
+  (128 (112 (112) (128)) (354 (354) (402 (396 (396) (402)) (1018))))))
+>  (bst-remove 1018 (list->tree L))
+(76
+ (46 (28 (28) (35 (35) (46))) (76))
+ (106 (100 (100) (106)) (128 (112 (112) (128)) (354 (354) (396 (396) (402))))))
+```
+
+## Other Operations
+
+### bintree-reverse
+
+Reverse a binary tree.
+
+```
+> (bintree-reverse (bst-insert 1017 (list->tree L)))
+(76
+ (106
+  (128
+   (354 (402 (1017 (1018) (1017)) (396 (402) (396))) (354))
+   (112 (128) (112)))
+  (100 (106) (100)))
+ (46 (76) (28 (35 (46) (35)) (28))))
+```
+
+### treesort
+
+Sort a list using the [Treesort](https://en.wikipedia.org/wiki/Treesort) algorithm.
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (treesort L)
+'(28 35 46 76 100 106 112 128 354 396 402)
+```
+
+### bintree-size
+
+Return the number of members of a binary tree.
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (bintree-size (list->tree L))
+23
+```
+
+### bintree-preorder
+
+See `FAST-BINTREE-PREORDER`.
+
+### fast-bintree-preorder
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (fast-bintree-preorder (list->tree L))
+'(76 46 28 28 35 35 46 76 106 100 100 106 128 112 112 128 354 354 402 396 396 402 1018)
+```
+
+### bintree-postorder
+
+See `FAST-BINTREE-POSTORDER`.
+
+### fast-bintree-postorder
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (fast-bintree-postorder (list->tree L))
+'(1018 402 396 396 402 354 354 128 112 112 128 106 100 100 106 76 46 35 35 28 28 46 76)
+```
+
+### bintree-inorder
+
+See `FAST-BINTREE-INORDER`.
+
+### fast-bintree-inorder
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (fast-bintree-inorder (list->tree L))
+'(28 28 35 35 46 46 76 76 100 100 106 106 112 112 128 128 354 354 396 396 402 402 1018)
+```
+
+### list->tree
+
+```
+> ,open pp
+> (p L)
+(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (p (list->tree L))
+(76
+ (46 (28 (28) (35 (35) (46))) (76))
+ (106
+  (100 (100) (106))
+  (128 (112 (112) (128)) (354 (354) (402 (396 (396) (402)) (1018))))))
+```
+
+### treesum
+
+```
+> L
+'(128 76 106 402 100 46 354 1018 112 28 396 35)
+> (p (list->tree L))
+(76
+ (46 (28 (28) (35 (35) (46))) (76))
+ (106
+  (100 (100) (106))
+  (128 (112 (112) (128)) (354 (354) (402 (396 (396) (402)) (1018))))))
+>  (treesum (list->tree L))
+4584
+```
