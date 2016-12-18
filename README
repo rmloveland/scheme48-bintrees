@@ -4,7 +4,7 @@ This is a binary tree and binary search tree library for Scheme 48
 (scsh).
 
 Based on
-[this article on Binary Search Trees](http://web.archive.org/web/20110917085740/http://en.literateprograms.org/Binary_search_tree_(Scheme)).
+[this article on Binary Search Trees](http://web.archive.org/web/20110917085740/http://en.literateprograms.org/Binary_search_tree_(Scheme).
 
 For more general information about binary search trees, see
 [Binary search tree](https://en.wikipedia.org/wiki/Binary_search_trees).
