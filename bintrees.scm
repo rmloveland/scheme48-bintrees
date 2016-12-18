@@ -6,29 +6,29 @@
 (define-structure bintrees
     ;; interface
     (export bintree-member?
-	    bintree-size
-	    bintree-reverse
-	    bintree-preorder
-	    fast-bintree-preorder
-	    bintree-postorder
-	    fast-bintree-postorder
-	    bintree-inorder
-	    fast-bintree-inorder
-	    bst-empty?
-	    bst-member?
-	    bst-insert
-	    (bst-insert! :syntax)
-	    bst-remove
-	    list->tree
-	    treesum
-	    treesort
-	    make-bintree-leaf
-	    make-bintree-node
-	    ;; Uncomment these lines to have some toy data to play with.
-	    L
-	    test-bintree
-	    test-bst
-	    )
+            bintree-size
+            bintree-reverse
+            bintree-preorder
+            fast-bintree-preorder
+            bintree-postorder
+            fast-bintree-postorder
+            bintree-inorder
+            fast-bintree-inorder
+            bst-empty?
+            bst-member?
+            bst-insert
+            (bst-insert! :syntax)
+            bst-remove
+            list->tree
+            treesum
+            treesort
+            make-bintree-leaf
+            make-bintree-node
+            ;; Uncomment these lines to have some toy data to play with.
+            L
+            test-bintree
+            test-bst
+            )
   (open scheme)
   (begin
 
